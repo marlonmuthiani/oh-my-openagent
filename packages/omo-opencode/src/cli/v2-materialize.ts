@@ -15,7 +15,6 @@ import { createMetisAgent } from "../agents/metis"
 import { createMomusAgent } from "../agents/momus"
 import { createAtlasAgent } from "../agents/atlas"
 import { createSisyphusJuniorAgentWithOverrides } from "../agents/sisyphus-junior/agent"
-import { loadBuiltinCommands } from "../features/builtin-commands/commands"
 
 /**
  * Materializes oh-my-openagent Ultimate surfaces as NATIVE OpenCode files so
