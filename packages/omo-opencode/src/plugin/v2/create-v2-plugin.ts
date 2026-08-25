@@ -3,6 +3,7 @@ import { isRecord } from "@oh-my-opencode/utils"
 import { log } from "../../shared/logger"
 import type { V2BusEvent, V2Plugin, V2PluginContext, V2Registration } from "./types"
 import { dispatchV2EventToV1Names, type V1EventDispatch } from "./event-names"
+import { buildTeamTools, omoStatusTool } from "./team-tools"
 
 const PLUGIN_ID = "oh-my-openagent"
 
@@ -79,6 +80,7 @@ export interface V2PluginModuleOptions {
 export function createV2PluginModule(options: V2PluginModuleOptions = {}): V2Plugin {
   return {
     id: PLUGIN_ID,
+    tui: true,
     setup: async (context: V2PluginContext) => {
       writeSetupMarker(context.app)
       const disposables: Array<() => Promise<void> | void> = []
@@ -98,6 +100,28 @@ export function createV2PluginModule(options: V2PluginModuleOptions = {}): V2Plu
           if (event.status === "error") return
         })
         track(afterRegistration)
+
+        // M2/M5: native v2 tools (status + team-mode core)
+        const toolsRegistration = await context.tool.transform((draft) => {
+          draft.add(omoStatusTool(context))
+          for (const tool of buildTeamTools(context)) draft.add(tool)
+        })
+        track(toolsRegistration)
+      })
+
+      // M4: compaction preservation re-triage — current beta docs list an
+      // experimental compacting hook; registration is opportunistic and
+      // error-isolated so older betas without it keep loading cleanly.
+      await registerDomain("compaction", async () => {
+        const sessionDomain = context.session as unknown as {
+          hook?: (name: string, callback: (input: unknown) => Promise<void>) => Promise<V2Registration>
+        }
+        if (typeof sessionDomain.hook !== "function") {
+          log("[v2-setup] compaction hook unavailable on this host")
+          return
+        }
+        const registration = await sessionDomain.hook("experimental.session.compacting", async () => {})
+        track(registration)
       })
 
       await registerDomain("event", async () => {

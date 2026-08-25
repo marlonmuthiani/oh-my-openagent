@@ -39,7 +39,7 @@ export const V2_DEGRADATION_LEDGER: readonly V2DegradationEntry[] = [
     feature: "compaction context injection",
     v1Surface: "experimental.session.compacting hook",
     status: "unavailable",
-    reason: "hook removed in the v2 beta plugin API",
+    reason: "hook removed in the v2 beta plugin API; foundation attempts an opportunistic registration and logs when the host lacks it",
     userImpact: "context and todo preservation across compaction is skipped on v2",
   },
   {
@@ -48,6 +48,34 @@ export const V2_DEGRADATION_LEDGER: readonly V2DegradationEntry[] = [
     status: "unavailable",
     reason: "hook removed in the v2 beta plugin API",
     userImpact: "auto-resume after compaction is skipped on v2",
+  },
+  {
+    feature: "ultimate agents as native markdown",
+    v1Surface: "plugin agent registry (dynamic delegation table)",
+    status: "degraded",
+    reason: "agents are materialized as .opencode agents markdown (bun run packages/omo-opencode/src/cli/v2-materialize.ts) instead of the dynamic registry; delegation tables are baked at generation time",
+    userImpact: "all OMO agents are selectable on v2 with omo.jsonc model routing, but Sisyphus delegation sections do not rebuild dynamically",
+  },
+  {
+    feature: "builtin slash commands as native markdown",
+    v1Surface: "plugin command registry",
+    status: "ported",
+    reason: "goal/start-work/refactor/handoff/remove-ai-slops/hyperplan/stop-continuation materialized as command markdown with team-mode addenda",
+    userImpact: "slash commands available on both hosts",
+  },
+  {
+    feature: "team-mode core tools",
+    v1Surface: "team_* tool family",
+    status: "degraded",
+    reason: "omo_team_create/status/abort registered natively over session create/prompt; tmux visualization, worktrees and continuation loops are not ported",
+    userImpact: "basic multi-member teams work on v2; visualization and advanced flows stay on v1",
+  },
+  {
+    feature: "tui component flag",
+    v1Surface: "./tui export",
+    status: "ported",
+    reason: "server definition sets tui:true so hosts may load a ./tui component",
+    userImpact: "hosts supporting local tui components can surface omo UI bits",
   },
   {
     feature: "tool.definition dynamic override",

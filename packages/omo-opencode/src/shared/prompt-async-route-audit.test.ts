@@ -53,6 +53,10 @@ const RAW_PROMPT_ALLOWLIST = new Map<string, string>([
     "adapts the v2 ctx.plugin generated client onto the v1 SDK session surface so gate-routed consumers keep working under the opencode2 beta host; performs no direct dispatch outside those gate-routed consumers",
   ],
   [
+    path.join(SOURCE_ROOT, "plugin", "v2", "team-tools.ts"),
+    "team-mode core tools dispatch member opening tasks through the host session surface on behalf of gate-routed omo consumers; no direct dispatch outside those consumers",
+  ],
+  [
     path.join(WORKSPACE_ROOT, "packages", "senpi-task", "src", "runners", "in-process", "child-handle.ts"),
     "drives a senpi CHILD AgentSession.prompt for spawned subagent turns; senpi-task cannot reach OpenCode session APIs (opencode-coupling audit) so the main-session injection invariant does not apply",
   ],
