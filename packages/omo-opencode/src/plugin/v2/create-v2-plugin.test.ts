@@ -42,11 +42,12 @@ function createContextStub(overrides: Partial<V2PluginContext> = {}): V2PluginCo
 
 describe("create-v2-plugin", () => {
   describe("#given the module factory", () => {
-    test("exposes the omo plugin id and a setup function", () => {
+    test("exposes the omo plugin id, tui flag and a setup function", () => {
       // given
       const plugin = createV2PluginModule()
       // then
       expect(plugin.id).toBe("oh-my-openagent")
+      expect(plugin.tui).toBe(true)
       expect(typeof plugin.setup).toBe("function")
     })
   })
@@ -61,6 +62,10 @@ describe("create-v2-plugin", () => {
       // then
       expect(context.tool.beforeHooks.length).toBe(1)
       expect(context.tool.afterHooks.length).toBe(1)
+      // M2/M5: omo_status + omo_team_create + omo_team_status + omo_team_abort
+      expect(context.tool.registered.length).toBe(4)
+      const names = context.tool.registered.map((tool) => (tool as { name: string }).name)
+      expect(names).toEqual(["omo_status", "omo_team_create", "omo_team_status", "omo_team_abort"])
       expect(typeof cleanup).toBe("function")
     })
 
